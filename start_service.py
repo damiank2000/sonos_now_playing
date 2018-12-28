@@ -2,6 +2,7 @@ import soco
 import pylast
 import json
 import logging
+import os
 from time import sleep
 from papirus import Papirus
 from papirus import PapirusText
@@ -44,11 +45,9 @@ def get_lastfm_title(track, default):
 def get_6music_title():
     current_track = user.get_now_playing()
     if current_track is not None:
-        current_6music_title = get_lastfm_title(current_track, "6 music")
+        current_6music_title = get_lastfm_title(current_track, default_6music_text)
     else:
-        f = open("6music_idle_text.txt")
-        current_6music_title = f.read()
-        f.close()
+        current_6music_title = default_6music_text
     return current_6music_title
 
 
@@ -78,10 +77,12 @@ def get_lastfm_user(lastfm_config):
 # start
 logging.basicConfig(
     filename='sonos_now_playing.log',
-    level=logging.INFO,
+    level=logging.WARNING,
     format='%(asctime)s %(message)s')
 
-with open('sonos_now_playing_config.json') as json_data_file:
+config_file_location=os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+with open(os.path.join(config_file_location, 'sonos_now_playing_config.json')) as json_data_file:
     config = json.load(json_data_file)
 
 zone_of_interest=config['sonos']['zone_of_interest']
@@ -89,8 +90,10 @@ user = get_lastfm_user(LastFmConfig(config))
 screen = Papirus()
 text = PapirusText()
 last_playing="None"
+default_6music_text="BBC 6 Music"
 
 screen.clear()
+text.write("Starting")
 logging.info("Monitoring zone: {}".format(zone_of_interest))
 
 while True:
@@ -109,8 +112,10 @@ while True:
                 sleep(1)
     except KeyboardInterrupt:
         print("Exit")
+	screen.clear()
         break
     except (ValueError, IndexError, KeyError, IOError, SystemError) as ex:
         logging.error(ex)
+	screen.clear()
         raise
 
