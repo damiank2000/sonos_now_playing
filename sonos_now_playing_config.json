@@ -1,0 +1,11 @@
+{
+    "sonos":{
+        "zone_of_interest":"<replace with sonos zone>"
+    },
+    "last.fm":{
+        "api_key":"<replace with Last.FM API shared key>",
+        "api_secret":"<replace with Last.FM API secret key>",
+        "username":"<replace with Last.FM use",
+        "password":"<replace with Last.FM password>"
+    }
+}
